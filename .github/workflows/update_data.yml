@@ -2,8 +2,8 @@ name: Update Stock Data
 
 on:
   schedule:
-    - cron: "0 0 * * *"   # Runs every day at midnight UTC
-  workflow_dispatch:      # Allows manual trigger from GitHub Actions tab
+    - cron: "0 0 * * *"   
+  workflow_dispatch:      
 
 jobs:
   update-data:
@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.13"   # Match your local Python version
+          python-version: "3.13"  
 
       - name: Install dependencies
         run: |
@@ -24,6 +24,8 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run data pipeline
+        env:
+          API_KEY: ${{ secrets.API_KEY }}  
         run: python main.py
 
       - name: Commit and push changes
