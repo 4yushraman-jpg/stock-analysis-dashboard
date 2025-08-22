@@ -1,0 +1,18 @@
+# Virtual Environment
+.venv
+venv/
+stock_env/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Secrets
+.env
+
+# Databases
+*.db
+*.sqlite3
+
+# VSCode settings
+.vscode/
