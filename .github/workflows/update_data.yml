@@ -1,40 +1,35 @@
-name: Daily Data Update
+name: Update Stock Data
 
 on:
   schedule:
-    - cron: '0 22 * * *' # 22:00 UTC daily (after US market close)
-  workflow_dispatch: # manual run button
+    - cron: "0 0 * * *"   # Runs every day at midnight UTC
+  workflow_dispatch:      # Allows manual trigger from GitHub Actions tab
 
 jobs:
   update-data:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Check out repository
+      - name: Checkout repo
         uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.13"   # Match your local Python version
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run ETL script
-        env:
-          API_KEY: ${{ secrets.API_KEY }}
+      - name: Run data pipeline
         run: python main.py
 
-      - name: Commit and push if there are changes
+      - name: Commit and push changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add processed_stock_data.pkl
-          if git diff --staged --quiet; then
-            echo "No changes to commit."
-          else
-            git commit -m "Automated data update"
-            git push origin HEAD:main
-          fi
+          git add processed_stock_data.csv
+          git commit -m "Update stock data [skip ci]" || echo "No changes to commit"
+          git push
